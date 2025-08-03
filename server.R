@@ -1,4 +1,3 @@
-
 anova_one_way_Server <- function(id, source_data) {
   moduleServer(id, function(input, output, session) {
 
@@ -30,18 +29,26 @@ anova_one_way_Server <- function(id, source_data) {
       )
     })
 
-    graph_type <- eventReactive(input$go, {
+    graph_type <- eventReactive(input$analyze, {
       box_plot(
         .data      = source_data(),
-        # x          =
+        x          = input$name_axis_x,
         y          = input$name_axis_y,
         .n_col     = input$n_col,
         .order_by  = input$id_order_fun,
+        .order     = input$id_order,
         title_name = input$title_name
       )
     })
 
-    analysis_type <- eventReactive(input$go, {
+    observeEvent(input$id_order_fun, {
+      if (input$id_order_fun == 'Default') {
+        var <- 'empty'
+      } else {var <- 'order'}
+      updateTabsetPanel(session, 'tabset_order', selected = var)
+    })
+
+    analysis_type <- eventReactive(input$analyze, {
       switch(
         input$selection ,
         Normality        = shapiro(source_data(), input$n_col) ,
@@ -54,7 +61,6 @@ anova_one_way_Server <- function(id, source_data) {
     output$plot <- renderPlotly({
       if(input$tabset == "Box plot")
         graph_type()
-
     })
 
     output$t_anova <- renderPrint({
@@ -67,10 +73,8 @@ anova_one_way_Server <- function(id, source_data) {
 
 
 function(input, output, session) {
-
   source_data <- reactive({
     read_xlsx('www/experimentacion.xlsx')
   })
   anova_one_way_Server('id', source_data)
-
 }

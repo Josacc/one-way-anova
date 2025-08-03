@@ -38,73 +38,93 @@ anova_one_way_UI <- function(id) {
         tabsetPanel(
           id = ns('tabset'),
           type = 'pills',
+          selected = 'Statistical analysis',
           tabPanel(
             'Box plot',
-            br(),
-            prettyRadioButtons(
-              ns('id_order_fun'),
-              'Ordered by',
-              choices    = c('Default', 'Mean', 'Median', 'Sd'),
-              status     = 'primary',
-              animation  = 'smooth'
-            ),
-            tabsetPanel(
-              id = ns('order'),
-              type = 'hidden',
-              tabPanel(
-                'Mean',
+            hr(style = 'border-color: #cccccc;'),
+            fluidRow(
+              column(
+                width = 6,
                 prettyRadioButtons(
-                  ns('id_order'),
-                  'Order',
-                  choices    = c('Descending'),
+                  ns('id_order_fun'),
+                  'Ordered by',
+                  choices    = c('Default', 'Mean', 'Median', 'Sd'),
                   status     = 'primary',
                   animation  = 'smooth'
                 )
+              ),
+              column(
+                width = 6,
+                tabsetPanel(
+                  id = ns('tabset_order'),
+                  type = 'hidden',
+                  tabPanel('empty'),
+                  tabPanel(
+                    'order',
+                    h5(p(strong('Order')), style = "margin-top: 4px;"),
+                    div(
+                      style = "margin-top: -5px;",
+                      prettyCheckbox(
+                        ns('id_order'),
+                        label     = 'Descending',
+                        value     = FALSE,
+                        status    = 'primary',
+                        animation = 'smooth'
+                      )
+                    )
+                  )
+                )
               )
             ),
-            br(),
-            textInput(
-              ns('title_name'), label = 'Graphic title'
-            ),
-            textInput(
-              ns('name_axis_y'), label = 'Y axis title'
-            )
+            textInput(ns('title_name'), label = 'Graphic title'),
+            textInput(ns('name_axis_x'), label = 'X axis title'),
+            textInput(ns('name_axis_y'), label = 'Y axis title')
           ),
-          tabPanel('Statistical analysis',
-                   br(),
-                   radioButtons(
-                     ns('selection'), 'Select test',
-                     choices = c('Normality', 'Homoscedasticity', 'ANOVA', 'all'),
-                     inline = T
-                   )
+          tabPanel(
+            'Statistical analysis',
+            hr(style = 'border-color: #cccccc;'),
+            prettyRadioButtons(
+              ns('selection'), 'Select test',
+              choices = c('Normality', 'Homoscedasticity', 'ANOVA', 'all'),
+              status     = 'primary',
+              animation  = 'smooth'
+            )
           )
         )
       ),
       mainPanel(
-        actionBttn(
-          inputId = ns('go'),
-          label = 'Analyze',
-          style = 'simple',
-          size = 'sm',
-          color = 'primary'
-        ),
-        br(),
-
-        # actionBttn(
-        #   inputId = ns('info_button_one_way_anova'),
-        #   label   = '',
-        #   icon    = icon('info-circle'),
-        #   style   = 'jelly'
-        # )
-
-
-        verbatimTextOutput(ns('t_anova')),
-        plotlyOutput(ns('plot'))
+        width = 9,
+        fluidRow(
+          column(
+            width = 11,
+            actionBttn(
+              inputId = ns('analyze'),
+              label = 'Analyze',
+              style = 'simple',
+              size = 'sm',
+              color = 'primary'
+            ),
+            br(),br(),br(),
+            verbatimTextOutput(ns('t_anova')),
+            plotlyOutput(ns('plot'))
+          ),
+          column(
+            width = 1,
+            div(
+              style = 'display: flex; justify-content: flex-end;' ,
+              actionBttn(
+                inputId = ns('info_button_one_way_anova'),
+                label   = '',
+                icon    = icon('info-circle'),
+                style   = 'jelly'
+              )
+            )
+          )
+        )
       )
     )
   )
 }
-
 
 fluidPage(
   br(),
