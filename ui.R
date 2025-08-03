@@ -36,8 +36,8 @@ anova_one_way_UI <- function(id) {
           width = '110px', value = 2, min = 2, max = 7
         ),
         tabsetPanel(
-          id = ns('tabset'),type = 'pills',
-
+          id = ns('tabset'),
+          type = 'pills',
           tabPanel(
             'Box plot',
             br(),
@@ -46,19 +46,21 @@ anova_one_way_UI <- function(id) {
               'Ordered by',
               choices    = c('Default', 'Mean', 'Median', 'Sd'),
               status     = 'primary',
-              icon       = icon('check'),
-              animation  = 'smooth',
-              inline     = TRUE
+              animation  = 'smooth'
             ),
-            radioGroupButtons(
-              ns('id_order'),
-              'Order',
-              selected = character(0),
-              choices = c(
-                `<i class='fa fa-sort-up'></i> Ascending ` = 'Ascending',
-                `<i class='fa fa-sort-down'></i> Descending ` = 'Descending'
-              ),
-              justified = TRUE,
+            tabsetPanel(
+              id = ns('order'),
+              type = 'hidden',
+              tabPanel(
+                'Mean',
+                prettyRadioButtons(
+                  ns('id_order'),
+                  'Order',
+                  choices    = c('Descending'),
+                  status     = 'primary',
+                  animation  = 'smooth'
+                )
+              )
             ),
             br(),
             textInput(
