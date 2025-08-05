@@ -83,9 +83,10 @@ anova_one_way_UI <- function(id) {
           tabPanel(
             'Statistical analysis',
             hr(style = 'border-color: #cccccc;'),
-            prettyRadioButtons(
-              ns('selection'), 'Select test',
-              choices = c('Normality', 'Homoscedasticity', 'ANOVA', 'all'),
+            prettyCheckboxGroup(
+              ns('inferential_test'),
+              'Select test',
+              choices    = c('Normality', 'Homoscedasticity', 'ANOVA', 'Tukey'),
               status     = 'primary',
               animation  = 'smooth'
             )
@@ -105,7 +106,7 @@ anova_one_way_UI <- function(id) {
               color = 'primary'
             ),
             br(),br(),br(),
-            verbatimTextOutput(ns('t_anova')),
+            tableOutput(ns('t_anova')),
             plotlyOutput(ns('plot'))
           ),
           column(

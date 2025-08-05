@@ -49,13 +49,19 @@ anova_one_way_Server <- function(id, source_data) {
     })
 
     analysis_type <- eventReactive(input$analyze, {
-      switch(
-        input$selection ,
-        Normality        = shapiro(source_data(), input$n_col) ,
-        Homoscedasticity = bar(source_data(), input$n_col) ,
-        ANOVA            = an(source_data(), input$n_col) ,
-        all              = analisis(source_data(), input$n_col)
-      )
+
+      validate(need(input$inferential_test, "Select at least one test"))
+
+      test <- input$inferential_test
+      for (i in test) {
+        switch(
+          i,
+          Normality        = print(shapiro(source_data(), input$n_col)),
+          Homoscedasticity = print(bar(source_data(), input$n_col)),
+          ANOVA            = print(an(source_data(), input$n_col)),
+          Tukey            = print(an(source_data(), input$n_col))
+        )
+      }
     })
 
     output$plot <- renderPlotly({
@@ -63,14 +69,13 @@ anova_one_way_Server <- function(id, source_data) {
         graph_type()
     })
 
-    output$t_anova <- renderPrint({
+    output$t_anova <- renderTable({
       if(input$tabset == "Statistical analysis")
         analysis_type()
-    })
+    }, rownames = TRUE)
 
   })
 }
-
 
 function(input, output, session) {
   source_data <- reactive({

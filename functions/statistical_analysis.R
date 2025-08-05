@@ -9,9 +9,12 @@ bar <- function(d, n_col){
 }
 
 an <- function(d, n_col){
-  print("ANOVA")
-  aov(d[[n_col]] ~ d[[1]]) %>%
-    summary()
+  # print("ANOVA")
+  # aov(d[[n_col]] ~ d[[1]]) %>%
+  #   summary()
+
+  anova_res <- aov(d[[n_col]] ~ d[[1]], data = d)
+  return(summary(anova_res)[[1]])
 }
 
 analisis <- function(d, n_col){
