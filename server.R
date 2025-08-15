@@ -48,31 +48,42 @@ anova_one_way_Server <- function(id, source_data) {
       updateTabsetPanel(session, 'tabset_order', selected = var)
     })
 
-    analysis_type <- eventReactive(input$analyze, {
-
+    empty_message <- eventReactive(input$analyze, {
       validate(need(input$inferential_test, "Select at least one test"))
+    })
 
-      test <- input$inferential_test
-      for (i in test) {
-        switch(
-          i,
-          Normality        = print(shapiro(source_data(), input$n_col)),
-          Homoscedasticity = print(bar(source_data(), input$n_col)),
-          ANOVA            = print(an(source_data(), input$n_col)),
-          Tukey            = print(an(source_data(), input$n_col))
-        )
-      }
+    output$empty <- renderTable({
+      req(input$tabset == "Statistical analysis")
+      empty_message()
+    })
+
+    analysis_type <- eventReactive(input$analyze, {
+      req(input$inferential_test)
+      vec_test <- input$inferential_test
+      list_tests <- list(
+        Normality        = shapiro_test(source_data(), input$n_col),
+        Homoscedasticity = bartlett_test(source_data(), input$n_col),
+        ANOVA            = anova_test(source_data(), input$n_col),
+        Tukey            = anova_test(source_data(), input$n_col)
+      )
+      return(list_tests[vec_test])
+    })
+
+    render_table <- function(var_input) {
+      output[[var_input]] <- renderTable({
+        req(input$tabset == "Statistical analysis")
+        analysis_type()[[var_input]]
+      }, rownames = TRUE, na = '')
+    }
+
+    observeEvent(analysis_type(), {
+      map(names(analysis_type()), render_table)
     })
 
     output$plot <- renderPlotly({
       if(input$tabset == "Box plot")
         graph_type()
     })
-
-    output$t_anova <- renderTable({
-      if(input$tabset == "Statistical analysis")
-        analysis_type()
-    }, rownames = TRUE)
 
   })
 }

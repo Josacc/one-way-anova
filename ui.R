@@ -38,7 +38,6 @@ anova_one_way_UI <- function(id) {
         tabsetPanel(
           id = ns('tabset'),
           type = 'pills',
-          selected = 'Statistical analysis',
           tabPanel(
             'Box plot',
             hr(style = 'border-color: #cccccc;'),
@@ -105,8 +104,12 @@ anova_one_way_UI <- function(id) {
               size = 'sm',
               color = 'primary'
             ),
-            br(),br(),br(),
-            tableOutput(ns('t_anova')),
+            br(), br(), br(),
+            tableOutput(ns('empty')),
+            map(
+              c('Normality', 'Homoscedasticity', 'ANOVA', 'Tukey'),
+              ~ tableOutput(ns(.x))
+            ),
             plotlyOutput(ns('plot'))
           ),
           column(
